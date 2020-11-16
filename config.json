@@ -1,0 +1,42 @@
+{
+  "id": "samsung-tv-serial",
+  "version": "1.0",
+  "type": "gateway",
+  "dependencies": {
+    "firmware": "1.0",
+    "addons": [
+      {
+        "id": "lua",
+        "version": "1.0"
+      }
+    ]
+  },
+
+  "permissions": [
+      "network",
+      "core",
+      "storage"
+  ],
+
+  "startup": "scripts/startup",
+  "teardown": "scripts/remove_device",
+
+  "gateway": {
+    "name": "samsung-tv-serial",
+    "label": "Samsung TV RS232",
+    "reason": "Start bus",
+    "unreachableReasons": [
+      { 
+        "reason": "Reason",
+        "advice": "Advice"
+      }
+    ],
+    "unreachableActions": [
+      { 
+        "label": "Delete",
+        "method": "start_exclude"
+      }
+    ],
+    "setItemValueCommand": "HUB:samsung-tv-serial/scripts/events/value_updated"
+  }
+}
