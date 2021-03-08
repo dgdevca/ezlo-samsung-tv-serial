@@ -16,5 +16,13 @@ if storage.exists( "conn" ) then
 end
 
 -- Add device
-logger.debug("Add device during startup (if required)")
+logger.debug("Add default device during startup (if required)")
 loadfile("HUB:"..PLUGIN.."/scripts/add_device")()
+
+-- set IP Address and PORT
+-- (need to move the GUI once supported)
+storage.set_string("IP", "10.50.40.8")
+storage.set_string("PORT", "2001")
+
+-- Create the network connection...
+loadfile("HUB:"..PLUGIN.."/scripts/create_connection")()

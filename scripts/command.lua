@@ -1,4 +1,3 @@
-
 local function command(params)
     local storage = require("storage")
     local network = require("network")
@@ -9,38 +8,34 @@ local function command(params)
 
     -- pull connection info from storage
     if not storage.exists( "conn" ) then 
-        logger.debug("Creating and storing connection...")
-        local hndl = network.connect( { ip = "10.50.14.8", port = "2001", connection_type = "TCP" } )
-        network.set_handler( hndl, "HUB:"..PLUGIN.."/scripts/events/network_event" )
-        if not hndl then
-            logger.error("Failed to connect.")
-            return
-        else
-            logger.info("CONNECTED! Connection is %1", hndl)
-            storage.set_number("conn",hndl)
-        end
-    end
-
-    hndl = storage.get_number("conn")
-    --network.set_handler( hndl, "HUB:"..PLUGIN.."/scripts/events/network_event" )
-    logger.debug("hndl: %1", hndl)
-
-    local command = ""
-    local action = ""
-
-    -- Basic start of command processing logic...
-    if params.power == "ON" then
-        action = {0x00, 0x00, 0x00, 0x02}
-    elseif params.power == "OFF" then
-        action = {0x00, 0x00, 0x00, 0x01}
+        logger.debug("Connection doesn't exist - error!")
     else
-        logger.warn("Unknown command: %1", params.power)
-        return
+        hndl = storage.get_number("conn")
+        logger.debug("hndl: %1", hndl)
+    
+        local command = ""
+        local action = ""
+    
+        -- Basic start of command processing logic...
+        if params.power == "ON" then
+            action = {0x00, 0x00, 0x00, 0x02}
+        elseif params.power == "OFF" then
+            action = {0x00, 0x00, 0x00, 0x01}
+        elseif params.volume == "UP" then
+            action = {0x01, 0x00, 0x01, 0x00}
+        elseif params.volume == "DOWN" then
+            action = {0x01, 0x00, 0x02, 0x00}
+        elseif params.volume == "MUTE" then
+            action = {0x02, 0x00, 0x00, 0x00}
+        else
+            logger.warn("Unknown command: %1", params)
+            return
+        end
+    
+        checksum = 0xFF - (0x08 + 0x22 + action[1] + action[2] + action[3] + action[4]) + 1
+        command = string.char(0x08,0x22,action[1],action[2],action[3],action[4],checksum)
+        network.send(hndl, command)
     end
-
-    checksum = 0xFF - (0x08 + 0x22 + action[1] + action[2] + action[3] + action[4]) + 1
-    command = string.char(0x08,0x22,action[1],action[2],action[3],action[4],checksum)
-    network.send(hndl, command)
 end
 
 command(...)

@@ -41,7 +41,7 @@ local function add_device()
 		}
 		assert(device_id,"Failed to create device, error "..(err or "unknown"))
 
-		-- Add POWER ON/OFF, using Switch item type (works, shows in GUI)
+		-- Add POWER ON/OFF, using Switch item type
 		item_id, err = core.add_item{
 			device_id = device_id,
 			name = "switch",
@@ -54,57 +54,26 @@ local function add_device()
 		assert(item_id,"Failed add item, error "..(err or "unknown"))
 		storage.set_string(item_id,"POWER")
 
-		-- Add VOLUME, using Dimmer item type (not visble in GUI, yet?)
+		-- Add VOLUME, using sound_volume item type  (doesn't show in GUI yet, work in progress)
 		item_id, err = core.add_item{
 			device_id = device_id,
-			name = "dimmer",
+			name = "sound_volume",
 			value_type = "int", 
 			value = 0,
 			value_min = 0,
 			value_max = 100,
 			has_getter = true,
-			has_setter = false,
+			has_setter = true,
 			show = true
 		}
 		assert(item_id,"Failed add item, error "..(err or "unknown"))
 		storage.set_string(item_id,"VOLUME")
-
-		-- Add setting (not visble in GUI, yet?):
-		setting_id, err = core.add_setting{
-			device_id = device_id,
-			label = {
-				lang_tag = "rs232_IP",
-				text = "IP"
-			},
-			value_type = "action",
-			value = {
-				text = "10.50.40.8",
-				lang_tag = "rs232_IP"
-			}
-		}
-		assert(setting_id,"Failed add setting, error "..(err or "unknown"))
 
 	end
 end
 
 add_device()
 
-
-		--[[
-		-- Add loudness (VOLUME) - this follows documentation, but errors out??
-		item_id, err = core.add_item{
-			device_id = device_id,
-			name = "loudness",
-			value_type = "loudness", 
-			value = 0,
-			scale = "a_weighted_decibels",
-			has_getter = true,
-			has_setter = false,
-			show = true
-		}
-		assert(item_id,"Failed add item, error "..(err or "unknown"))
-		storage.set_string(item_id,"VOLUME")
-		]]
 
 		
 		

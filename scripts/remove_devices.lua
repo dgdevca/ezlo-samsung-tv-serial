@@ -1,9 +1,9 @@
 local storage = require("storage")
 local core = require("core")
 local PLUGIN = storage.get_string("PLUGIN")
-local logger = require("HUB:"..PLUGIN.."/scripts/utils/log").setPrefix(PLUGIN.."/scripts/remove_device").setLevel(storage.get_number("log_level") or 99)
+local logger = require("HUB:"..PLUGIN.."/scripts/utils/log").setPrefix(PLUGIN.."/scripts/remove_devices").setLevel(storage.get_number("log_level") or 99)
 
-local function remove_device()
+local function remove_devices()
 	-- Find the devices for this gateway. Each gateway (= plugin of type gateway) has its own 
 	local gateway = core.get_gateway()
 	local self_id = gateway.id
@@ -21,4 +21,4 @@ local function remove_device()
 	end
 end
 
-remove_device()
+remove_devices()

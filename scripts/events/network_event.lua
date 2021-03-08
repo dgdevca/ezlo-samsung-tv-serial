@@ -24,12 +24,30 @@ if params.event then
             elseif io_activity_type == "FAILED_TO_CONNECT" then
                 logger.warn("FAILED_TO_CONNECT")
             elseif io_activity_type == "IN" then
-                local data = network.receive( hndl )
-                logger.debug("IN: %1", StringOfByteValues(data))
+                --need to inspect the data buffer for a command ack
+                local data = ""
+                local i = ""  -- start index
+                local j = ""  -- end index
+                
+                data = network.inspect_data( hndl )
+                size = network.inspect_data_size( hndl )
+                logger.debug("BUFFER (bytes): %1", StringOfByteValues(data))
+                logger.debug("BUFFER: %1", data)    
+
+                if string.find( data, "\x03\x0C\xF1" ) then -- COMMAND ACK: 0x03, 0x0C, 0xF1
+                    i, j = string.find(data, "\x03\x0C\xF1")
+                    logger.debug("Command ACK")
+                    data = network.receive( hndl, j )
+                    logger.debug("IN: %1", StringOfByteValues(data))    
+                elseif size >= 3 then
+                    -- No defined end of line / command, so process and empty buffer. 
+                    -- Noise is mostly from the POWER ON command. Afterwards, TV only sends Command ACK responses.
+                    data = network.receive( hndl, j )
+                    logger.debug("IN: %1", StringOfByteValues(data))
+                end
             elseif io_activity_type == "OUT" then
                 logger.debug("OUT")
                 print("samsung-tv-serial: OUT")
-                --doesn't ever run??
             end
         end
     end

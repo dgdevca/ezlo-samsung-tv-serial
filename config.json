@@ -19,7 +19,7 @@
   ],
 
   "startup": "scripts/startup",
-  "teardown": "scripts/remove_device",
+  "teardown": "scripts/remove_devices",
 
   "gateway": {
     "name": "samsung-tv-serial",
